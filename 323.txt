@@ -1,2 +1,71 @@
-323
-hhhhhh
+//在内存非常有限的情况下，求序列A的最高频率元素X
+#include<stdio.h>
+#include<stdlib.h>
+struct Node{
+	int e,n;      //e为元素值 n为出现次数
+	Node *next;
+};
+int L;          //序列A长度
+Node *A;        
+int X;          //序列A最高频元素
+int main()
+{
+	int e;
+	Node *p,*r,*q;
+	A=NULL;
+	while(scanf("%d",&L)==1)
+	{
+		scanf("%d",&e);
+		A=(Node *)malloc(sizeof(Node));
+		A->e=e;
+		A->n=1;
+		A->next=NULL;
+		L--;
+		while(L>0)
+		{
+			scanf("%d",&e);
+			p=A;
+			while(p!=NULL)
+			{
+				if(p->e==e)		//A中存在元素e
+				{
+					p->n++;
+					break;
+				}
+				q=p;
+				p=p->next;
+			}
+			if(p==NULL)			//A中不存在元素e
+			{
+				r=(Node*)malloc(sizeof(Node));
+				r->e=e;
+				r->n=1;
+				r->next=NULL;
+				q->next=r;
+			}
+			L--;
+		}
+		int maxn=0;
+		p=A;
+		while(p!=NULL)
+		{
+			if(p->n>maxn)
+			{
+				maxn=p->n;
+				X=p->e;
+			}
+			p=p->next;
+		}
+		printf("%d\n",X);
+		p=A;
+		while(p!=NULL)
+		{
+			r=p;
+			p=p->next;
+			free(r);
+		}
+		A=NULL;
+		break;
+	}
+	return 0;
+}
