@@ -1,42 +1,43 @@
-//数据结构实验报告一 顺序表排序  降序
+//Printer Queue
 #include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
-typedef struct node{
-	int *data;
-	int length;
-	int size;
-}Link;
+const int MAX=128;
+int n,m;
+int qu[MAX],s;
+int ans;
 int main()
 {
-	int L,a,i,j;
-	Link A;
-	srand((unsigned)time(NULL));
-	scanf("%d",&L);
-	A.data=(int *)malloc(sizeof(int)*L);
-	A.length=0;
-	A.size=L;
-	for(i=0;i<L;i++)
+	int t;
+	int i;
+	scanf("%d",&t);
+	while(t--)
 	{
-		a=rand()%100+1;
-		printf("%d ",a);
-		A.data[i]=a;
-		A.length++;
-	}
-	printf("\n");
-	for(i=0;i<L-1;i++)
-	{
-		for(j=0;j<L-i-1;j++)
+		scanf("%d%d",&n,&m);
+		m--;
+		for(i=0;i<n;i++)
 		{
-			if(A.data[j]<A.data[j+1])
-			{
-				A.data[j]=A.data[j]^A.data[j+1];
-				A.data[j+1]=A.data[j]^A.data[j+1];
-				A.data[j]=A.data[j]^A.data[j+1];
-			}
+			scanf("%d",&qu[i]);
 		}
+		ans=0;
+		s=0;
+		while(qu[m]>0)
+		{
+			if(qu[s]>0)
+			{
+				int max=0;
+				for(i=0;i<n;i++)
+				{
+					if(max<qu[i])
+						max=qu[i];
+				}
+				if(qu[s]>=max)
+				{
+					ans++;
+					qu[s]=0;
+				}
+			}
+			s=(s+1)%n;
+		}
+		printf("%d\n",ans);
 	}
-	for(i=0;i<L;i++)
-		printf("%d\n",A.data[i]);
 	return 0;
 }
