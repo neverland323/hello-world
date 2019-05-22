@@ -28,15 +28,17 @@ int main()
 Polynomial Create(int n)
 {
 	Polynomial p,q,s;
-	int i;
+	int a,b;
 	p=(Polynomial)malloc(sizeof(Polynomial));
 	p->next=NULL;
 	s=p;
-	for(i=1;i<=n;i++)
+	a=rand()%20+1;
+	b=rand()%5+1;
+	while(n--)
 	{
 		q=(Polynomial)malloc(sizeof(Polynomial));
-		q->coef=rand()%20+1;
-		q->expon=rand()%5+1;     //生成<=5的指数，<=20的系数
+		q->coef=a++;
+		q->expon=b++;
 		q->next=NULL;
 		p->next=q;
 		p=q;
@@ -46,7 +48,7 @@ Polynomial Create(int n)
 }
 Polynomial Add(Polynomial p1,Polynomial p2)
 {
-	Polynomial s,q,temp,r; 
+	Polynomial s,q,temp; 
 	s=p1;
 	p2=p2->next;
 	while(p2)
