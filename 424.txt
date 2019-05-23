@@ -1,1 +1,139 @@
-hhh
+#include<stdio.h>
+const int MAX_STRLEN=256;
+const int MAX_STACKSIZE=256;
+void InfixToSuffix(const char*infix,char*suffix);
+bool Compute(const char*suffix);
+int main()
+{
+	char infix[MAX_STRLEN],suffix[MAX_STACKSIZE];
+	int t=0;
+	while(gets(infix))
+	{
+		t++;
+		InfixToSuffix(infix,suffix);
+		bool isTrue=Compute(suffix);
+		printf("Expression t :");
+		if(isTrue)
+			printf("V\n");
+		else
+			printf("F\n");
+	}
+	return 0;
+}
+void InfixToSuffix(const char*infix,char*suffix)
+{
+	char stk[MAX_STACKSIZE];
+	int top;
+	char ch;
+	top=-1;
+	int i=0,j=0;
+	ch=infix[i];
+	i++;
+	while(ch!='\0')
+	{
+		if(ch==' ')
+		{}
+		else if(ch=='(')
+		{
+			top++;
+			stk[top]=ch;
+		}
+		else if(ch==')')
+		{
+			while(stk[top]!='(')
+			{
+				suffix[j]=stk[top];
+				top--;
+				j++;
+			}
+			top--;
+		}
+		else if(ch=='|')
+		{
+			while(top!=-1&&stk[top]!='(')
+			{
+				suffix[j]=stk[top];
+				top--;
+				j++;
+			}
+			top++;
+			stk[top]=ch;
+		}
+		else if(ch=='&')
+		{
+			while(stk[top]=='&'||stk[top]=='!')
+			{
+				suffix[j]=stk[top];
+				top--;
+				j++;
+			}
+			top++;
+			stk[top]=ch;
+		}
+		else if(ch=='!')
+		{
+			top++;
+			stk[top]=ch;
+		}
+		else
+		{
+			suffix[j]=ch;
+			j++;
+			while(top!=-1&&stk[top]=='!')
+			{
+				suffix[j]=stk[top];
+				top--;
+				j++;
+			}
+		}
+		ch=infix[i];
+		i++;
+	}
+		while(top!=-1)
+		{
+			suffix[j]=stk[top];
+			top--;
+			j++;
+		}
+		suffix[j]='\0';
+}
+bool Compute(const char *suffix)
+{
+	bool stk[MAX_STACKSIZE];
+	int top;
+	char ch;
+	top=-1;
+	int i=0;
+	ch=suffix[i];
+	i++;
+	while(ch!='\0')
+	{
+		if(ch=='|')
+		{
+			stk[top-1]|=stk[top];
+			top--;
+		}
+		else if(ch=='&')
+		{
+			stk[top-1]&=stk[top];
+			top--;
+		}
+		else if(ch=='!')
+			stk[top]=!stk[top];
+		else if(ch=='V')
+		{
+			top++;
+			stk[top]=true;
+		}
+		else if(ch=='F')
+		{
+			top++;
+			stk[top]=false;
+		}
+		ch=suffix[i];
+		i++;
+	}
+	return stk[top];
+}
+
+
