@@ -1,139 +1,93 @@
 #include<stdio.h>
-const int MAX_STRLEN=256;
-const int MAX_STACKSIZE=256;
-void InfixToSuffix(const char*infix,char*suffix);
-bool Compute(const char*suffix);
+#include<stdlib.h>
+const int Max=30;
+typedef struct node{
+	char *str;
+	int top;
+	int n;
+}Stack;
+void Judge1(char *a,int n,Stack *S);
+void Judge2(char *a,int n,Stack *S);
 int main()
 {
-	char infix[MAX_STRLEN],suffix[MAX_STACKSIZE];
-	int t=0;
-	while(gets(infix))
-	{
-		t++;
-		InfixToSuffix(infix,suffix);
-		bool isTrue=Compute(suffix);
-		printf("Expression t :");
-		if(isTrue)
-			printf("V\n");
-		else
-			printf("F\n");
-	}
+	Stack S;
+	char a[Max];
+	int i=0;
+	scanf("%d",&S.n);
+	S.str=(char *)malloc(sizeof(char)*S.n);
+	S.top=-1;
+	getchar();
+	gets(a);
+	if(S.n%2!=0)
+		Judge1(a,S.n,&S);
+	else
+		Judge2(a,S.n,&S);
 	return 0;
 }
-void InfixToSuffix(const char*infix,char*suffix)
+void Judge1(char *a,int n,Stack *S)
 {
-	char stk[MAX_STACKSIZE];
-	int top;
 	char ch;
-	top=-1;
-	int i=0,j=0;
-	ch=infix[i];
-	i++;
+	int i=0;
+	int flag=-1;
+	ch=a[i];
 	while(ch!='\0')
 	{
-		if(ch==' ')
+		if(i<(n-1)/2)
+		{
+			S->top++;
+			S->str[S->top]=ch;
+		}
+		else if(i==(n-1)/2)
 		{}
-		else if(ch=='(')
+		else
 		{
-			top++;
-			stk[top]=ch;
-		}
-		else if(ch==')')
-		{
-			while(stk[top]!='(')
+			if(S->str[S->top]==ch)
 			{
-				suffix[j]=stk[top];
-				top--;
-				j++;
+				flag=1;
+				S->top--;
 			}
-			top--;
-		}
-		else if(ch=='|')
-		{
-			while(top!=-1&&stk[top]!='(')
+			else
 			{
-				suffix[j]=stk[top];
-				top--;
-				j++;
+				printf("F\n");
+				break;
 			}
-			top++;
-			stk[top]=ch;
 		}
-		else if(ch=='&')
+		i++;
+		ch=a[i];
+	}
+	if(flag==1)
+		printf("T\n");
+}
+void Judge2(char *a,int n,Stack *S)
+{
+	char ch;
+	int i=0;
+	int flag=-1;
+	ch=a[i];
+	while(ch!='\0')
+	{
+		if(i<=n/2-1)
 		{
-			while(stk[top]=='&'||stk[top]=='!')
-			{
-				suffix[j]=stk[top];
-				top--;
-				j++;
-			}
-			top++;
-			stk[top]=ch;
-		}
-		else if(ch=='!')
-		{
-			top++;
-			stk[top]=ch;
+			S->top++;
+			S->str[S->top]=ch;
 		}
 		else
 		{
-			suffix[j]=ch;
-			j++;
-			while(top!=-1&&stk[top]=='!')
+			if(S->str[S->top]==ch)
 			{
-				suffix[j]=stk[top];
-				top--;
-				j++;
+				flag=1;
+				S->top--;
+			}
+			else
+			{
+				printf("F\n");
+				break;
 			}
 		}
-		ch=infix[i];
 		i++;
+		ch=a[i];
 	}
-		while(top!=-1)
-		{
-			suffix[j]=stk[top];
-			top--;
-			j++;
-		}
-		suffix[j]='\0';
+	if(flag==1)
+		printf("T\n");
 }
-bool Compute(const char *suffix)
-{
-	bool stk[MAX_STACKSIZE];
-	int top;
-	char ch;
-	top=-1;
-	int i=0;
-	ch=suffix[i];
-	i++;
-	while(ch!='\0')
-	{
-		if(ch=='|')
-		{
-			stk[top-1]|=stk[top];
-			top--;
-		}
-		else if(ch=='&')
-		{
-			stk[top-1]&=stk[top];
-			top--;
-		}
-		else if(ch=='!')
-			stk[top]=!stk[top];
-		else if(ch=='V')
-		{
-			top++;
-			stk[top]=true;
-		}
-		else if(ch=='F')
-		{
-			top++;
-			stk[top]=false;
-		}
-		ch=suffix[i];
-		i++;
-	}
-	return stk[top];
-}
-
 
