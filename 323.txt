@@ -1,93 +1,101 @@
-#include<stdio.h>
-#include<stdlib.h>
-const int Max=30;
-typedef struct node{
-	char *str;
-	int top;
-	int n;
-}Stack;
-void Judge1(char *a,int n,Stack *S);
-void Judge2(char *a,int n,Stack *S);
-int main()
+typedef int DataType;
+const Max=1000;
+typedef struct Node {
+	DataType data;
+	struct Node *next;
+}Lnode; //节点类型
+
+typedef struct Qu
 {
-	Stack S;
-	char a[Max];
-	int i=0;
-	scanf("%d",&S.n);
-	S.str=(char *)malloc(sizeof(char)*S.n);
-	S.top=-1;
-	getchar();
-	gets(a);
-	if(S.n%2!=0)
-		Judge1(a,S.n,&S);
-	else
-		Judge2(a,S.n,&S);
-	return 0;
-}
-void Judge1(char *a,int n,Stack *S)
+	Lnode *front;
+	Lnode *rear;	
+} Queue;//队列类型
+//主文件
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+
+Queue * Initiate_queue()//初始化队列，队列有头结点。返回队列的指针。
 {
-	char ch;
-	int i=0;
-	int flag=-1;
-	ch=a[i];
-	while(ch!='\0')
-	{
-		if(i<(n-1)/2)
-		{
-			S->top++;
-			S->str[S->top]=ch;
-		}
-		else if(i==(n-1)/2)
-		{}
-		else
-		{
-			if(S->str[S->top]==ch)
-			{
-				flag=1;
-				S->top--;
-			}
-			else
-			{
-				printf("F\n");
-				break;
-			}
-		}
-		i++;
-		ch=a[i];
-	}
-	if(flag==1)
-		printf("T\n");
-}
-void Judge2(char *a,int n,Stack *S)
-{
-	char ch;
-	int i=0;
-	int flag=-1;
-	ch=a[i];
-	while(ch!='\0')
-	{
-		if(i<=n/2-1)
-		{
-			S->top++;
-			S->str[S->top]=ch;
-		}
-		else
-		{
-			if(S->str[S->top]==ch)
-			{
-				flag=1;
-				S->top--;
-			}
-			else
-			{
-				printf("F\n");
-				break;
-			}
-		}
-		i++;
-		ch=a[i];
-	}
-	if(flag==1)
-		printf("T\n");
+	Queue *Q;
+	Lnode *node;
+	Q=(Queue *)malloc(sizeof(Queue));
+	node=(Lnode *)malloc(sizeof(Lnode));
+	node->data=Max;
+	node->next=NULL;
+	Q->front=Q->rear=node;
+	return Q;
 }
 
+int Queue_empty (Queue *queue)//判断队列是否为空，为空返回1，否则返回0
+{
+	if(queue->front==queue->rear)
+		return 1;
+	else
+		return 0;
+}
+
+void En_queue(Queue *queue, DataType data)//入队
+{
+	Lnode *p;
+	p=(Lnode*)malloc(sizeof(Lnode));
+	p->data=data;
+	p->next=NULL;
+	queue->rear->next=p;
+	queue->rear=p;
+}
+
+DataType De_queue(Queue *queue)//出队一个节点，返回其值
+{
+	Lnode *de_node;
+	int seq;
+	if(Queue_empty(queue)==1)//判断队列是否为空
+		
+	{
+		printf("The queue is empty! Cannot dequeue");
+		return -1;
+	}
+	
+	else//出队一个元素
+	{
+		de_node=queue->front->next;
+		queue->front->next=de_node->next;
+		if(queue->rear==de_node)
+			queue->front=queue->rear;
+		seq=de_node->data;
+		free(de_node);
+		return seq;
+	}	
+	
+}
+
+void displayQueue(Queue *queue)//显示从队头到队尾的元素
+{
+	int data;
+	while(queue->front!=queue->rear)
+	{
+		data=De_queue(queue);
+		printf("%d ",data);
+	}
+}
+
+
+void main()//主函数
+{
+	Queue *Q;
+	int i;
+	int max;
+	int data;
+	Q=Initiate_queue();
+	printf("Please input  elements\n");
+	scanf("%d",&max);
+	for(i=0;i<max;i++)
+	{
+		scanf("%d",&data);	
+		En_queue(Q, data);					//让输入的元素成为队列
+	}
+	De_queue(Q);					//出队一个元素
+    displayQueue(Q);				//显示队列元素
+}
