@@ -63,13 +63,15 @@ testee Create(testee L,int N)
 }
 void fun1(testee L,char *query)    //成绩降序排序
 {
-	testee p,h,s,g,temp,pre1,pre2,pre3;   //h1为标记开始位置，p移动，s插入节点,pre1为p之前的标记为了插入,pre2为g之前的标记
+	testee p,h,s,g,temp;  
 	char a[Max];
 	h=L;
-	p=h->next;
-	while(L->next)
+	p=h;
+	L=L->next;
+	while(L)
 	{
 		strncpy(a,L->card,1);
+		a[1]='\0';
 		if(strcmp(a,query)==0)
 		{
 			s=(testee)malloc(sizeof(testee));
@@ -82,30 +84,39 @@ void fun1(testee L,char *query)    //成绩降序排序
 		}
 		L=L->next;
 	}
-	g=h->next->next;
-	pre2=h->next;
-	pre3=pre2;
-	while(g)       //排序
+	p=h->next;
+	temp=(testee)malloc(sizeof(testee));
+	temp->card=(char *)malloc(sizeof(char)*14);
+	temp->next=NULL;
+	while(p)       //排序
 	{
-		pre1=L;
-		p=L->next;
-		while(p)
+		g=p->next;
+		while(g)
 		{
-			if(p->score<g->score||p->score==g->score&&strcmp(p->card,g->card)<0)
+			if(g->score>p->score)
 			{
-				temp=g;
-				temp->next=p;
-				pre1->next=temp;
-				pre3=g->next;
-				pre2->next=pre3;  //pre3用来衔接，pre2用来记录g之前的节点
-				g=pre3;
-				pre3=pre2;
-				pre1=pre1->next;
-			}	
-			pre1=pre1->next;
-			p=p->next;
+				strcpy(temp->card,p->card);
+				temp->score=p->score;
+				strcpy(p->card,g->card);
+				p->score=g->score;
+				strcpy(g->card,temp->card);
+				g->score=temp->score;
+			}
+			else if(g->score==p->score)
+			{
+				if(strcmp(g->card,p->card)<0)
+				{
+					strcpy(temp->card,p->card);
+					temp->score=p->score;
+					strcpy(p->card,g->card);
+					p->score=g->score;
+					strcpy(g->card,temp->card);
+					g->score=temp->score;
+				}
+			}
+			g=g->next;
 		}
-		g=g->next;
+		p=p->next;
 	}
 	Print(h);
 }
