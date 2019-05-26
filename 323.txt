@@ -1,101 +1,130 @@
-typedef int DataType;
-const Max=1000;
-typedef struct Node {
-	DataType data;
-	struct Node *next;
-}Lnode; //节点类型
-
-typedef struct Qu
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+const int Max=14;
+struct node{
+	char *card;
+	int score;
+	struct node *next;
+};
+typedef struct node *testee;
+testee Create(testee L,int N);
+void fun1(testee L,char *query);
+void fun2(testee L,char *query);
+void fun3(testee L,char *query);
+void Print(testee L);
+int main()
 {
-	Lnode *front;
-	Lnode *rear;	
-} Queue;//队列类型
-//主文件
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
-
-Queue * Initiate_queue()//初始化队列，队列有头结点。返回队列的指针。
-{
-	Queue *Q;
-	Lnode *node;
-	Q=(Queue *)malloc(sizeof(Queue));
-	node=(Lnode *)malloc(sizeof(Lnode));
-	node->data=Max;
-	node->next=NULL;
-	Q->front=Q->rear=node;
-	return Q;
-}
-
-int Queue_empty (Queue *queue)//判断队列是否为空，为空返回1，否则返回0
-{
-	if(queue->front==queue->rear)
-		return 1;
-	else
-		return 0;
-}
-
-void En_queue(Queue *queue, DataType data)//入队
-{
-	Lnode *p;
-	p=(Lnode*)malloc(sizeof(Lnode));
-	p->data=data;
-	p->next=NULL;
-	queue->rear->next=p;
-	queue->rear=p;
-}
-
-DataType De_queue(Queue *queue)//出队一个节点，返回其值
-{
-	Lnode *de_node;
-	int seq;
-	if(Queue_empty(queue)==1)//判断队列是否为空
-		
+	int N,M,type,i;
+	testee L;
+	char query[7];
+	scanf("%d%d",&N,&M);
+	L=Create(L,N);
+	for(i=1;i<=M;i++)
 	{
-		printf("The queue is empty! Cannot dequeue");
-		return -1;
+		scanf("%d",&type);
+		scanf("%s",query);
+		printf("Case %d:%d %s\n",i,i,query);
+		switch(type)
+		{
+		case 1:
+			fun1(L,query);
+			break;
+		case 2:
+			fun2(L,query);
+			break;
+		case 3:
+			fun3(L,query);
+			break;
+		}
 	}
+	return 0;
+}
+testee Create(testee L,int N)
+{
+	testee p,g;
+	char a[Max];
+	int b;
+	L=(testee)malloc(sizeof(testee));
+	L->next=NULL;
+	g=L;
+	while(N--)
+	{
+		scanf("%s%d",a,&b);
+		p=(testee)malloc(sizeof(testee));
+		p->card=(char*)malloc(sizeof(char)*14);
+		strcpy(p->card,a);
+		p->score=b;
+		p->next=NULL;
+		L->next=p;
+		L=p;
+	}
+	return g;
+}
+void fun1(testee L,char *query)    //成绩降序排序
+{
+	testee p,h,s,g,temp,pre1,pre2,pre3;   //h1为标记开始位置，p移动，s插入节点,pre1为p之前的标记为了插入,pre2为g之前的标记
+	char a[Max];
+	h=L;
+	p=h->next;
+	while(L->next)
+	{
+		strncpy(a,L->card,1);
+		if(strcmp(a,query)==0)
+		{
+			s=(testee)malloc(sizeof(testee));
+			s->card=(char *)malloc(sizeof(char)*14);
+			s->next=NULL;
+			strcpy(s->card,L->card);
+			s->score=L->score;
+			p->next=s;
+			p=s;
+		}
+		L=L->next;
+	}
+	g=h->next->next;
+	pre2=h->next;
+	pre3=pre2;
+	while(g)       //排序
+	{
+		pre1=L;
+		p=L->next;
+		while(p)
+		{
+			if(p->score<g->score||p->score==g->score&&strcmp(p->card,g->card)<0)
+			{
+				temp=g;
+				temp->next=p;
+				pre1->next=temp;
+				pre3=g->next;
+				pre2->next=pre3;  //pre3用来衔接，pre2用来记录g之前的节点
+				g=pre3;
+				pre3=pre2;
+				pre1=pre1->next;
+			}	
+			pre1=pre1->next;
+			p=p->next;
+		}
+		g=g->next;
+	}
+	Print(h);
+}
+void Print(testee L)
+{
+	testee p;
+	p=L->next;
+	while(p)
+	{
+		printf("%s %d\n",p->card,p->score);
+		p=p->next;
+	}
+}
+void fun2(testee L,char *query)
+{
+
+}
+void fun3(testee L,char *query)
+{
+
+}
 	
-	else//出队一个元素
-	{
-		de_node=queue->front->next;
-		queue->front->next=de_node->next;
-		if(queue->rear==de_node)
-			queue->front=queue->rear;
-		seq=de_node->data;
-		free(de_node);
-		return seq;
-	}	
-	
-}
-
-void displayQueue(Queue *queue)//显示从队头到队尾的元素
-{
-	int data;
-	while(queue->front!=queue->rear)
-	{
-		data=De_queue(queue);
-		printf("%d ",data);
-	}
-}
-
-
-void main()//主函数
-{
-	Queue *Q;
-	int i;
-	int max;
-	int data;
-	Q=Initiate_queue();
-	printf("Please input  elements\n");
-	scanf("%d",&max);
-	for(i=0;i<max;i++)
-	{
-		scanf("%d",&data);	
-		En_queue(Q, data);					//让输入的元素成为队列
-	}
-	De_queue(Q);					//出队一个元素
-    displayQueue(Q);				//显示队列元素
-}
