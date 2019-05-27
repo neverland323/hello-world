@@ -65,6 +65,7 @@ void fun1(testee L,char *query)    //成绩降序排序
 {
 	testee p,h,s,g,temp;  
 	char a[Max];
+	int flag=0;
 	h=L;
 	p=h;
 	L=L->next;
@@ -74,6 +75,7 @@ void fun1(testee L,char *query)    //成绩降序排序
 		a[1]='\0';
 		if(strcmp(a,query)==0)
 		{
+			flag=1;
 			s=(testee)malloc(sizeof(testee));
 			s->card=(char *)malloc(sizeof(char)*14);
 			s->next=NULL;
@@ -83,6 +85,10 @@ void fun1(testee L,char *query)    //成绩降序排序
 			p=s;
 		}
 		L=L->next;
+	}
+	if(flag==0)
+	{
+		printf("NA\n");
 	}
 	p=h->next;
 	temp=(testee)malloc(sizeof(testee));
@@ -132,10 +138,110 @@ void Print(testee L)
 }
 void fun2(testee L,char *query)
 {
-
+	int total=0,n=0;
+	testee p;
+	char a[Max];
+	p=L->next;
+	while(p)
+	{
+		strncpy(a,&p->card[1],3);
+		a[3]='\0';
+		if(strcmp(a,query)==0)
+		{
+			total+=p->score;
+			n++;
+		}
+		p=p->next;
+	}
+	if(total==0)
+		printf("NA\n");
+	else
+		printf("%d %d\n",n,total);
 }
 void fun3(testee L,char *query)
 {
-
+	int num=0;
+	char a[Max],b[Max];
+	L=L->next;
+	testee S,p,q,s,pre,temp;      //s写，q指向新建链表头结点，p指插入节点位置兼遍历，L遍历传入链表
+	S=(testee)malloc(sizeof(testee));
+	S->card=(char *)malloc(sizeof(char)*Max);
+	S->next=NULL;
+	q=S;    //q不变
+	while(L)
+	{
+		strncpy(a,&L->card[4],6);
+		a[6]='\0';
+		pre=S;
+		p=q->next;
+		if(strcmp(a,query)==0)
+		{
+			while(p)         //存在考场号 score++,不存在插入节点
+			{
+				strncpy(b,&L->card[1],3);
+				b[3]='\0';
+				if(strcmp(b,p->card)==0)
+				{
+					p->score++;
+					break;
+				}
+				pre=pre->next;
+				p=p->next;
+			}
+			if(!p)
+			{
+				s=(testee)malloc(sizeof(testee));
+				s->card=(char*)malloc(sizeof(char)*Max);
+				strncpy(s->card,&L->card[1],3);
+				s->card[3]='\0';
+				s->score=1;
+				s->next=NULL;
+				pre->next=s;
+			}
+		}
+		L=L->next;
+	}
+	if(!S->next)
+		printf("NA\n");
+	else
+	{
+		p=S->next;
+		q=S->next->next;
+		temp=(testee)malloc(sizeof(testee));
+		temp->card=(char*)malloc(sizeof(char)*Max);
+		temp->next=NULL;
+		while(p)
+		{
+			while(q)
+			{
+				if(q->score>p->score)
+				{
+					strcpy(temp->card,q->card);
+					temp->score=q->score;
+					strcpy(q->card,p->card);
+					q->score=p->score;
+					strcpy(p->card,temp->card);
+					p->score=temp->score;
+				}
+				q=q->next;
+			}
+			p=p->next;
+		}
+		Print(S);
+	}
 }
-	
+/*	testee p;
+	p=L->next;
+	char a[Max];
+	while(p)
+	{
+		strncpy(a,&query[4],6);
+		if(strcmp(a,query)==0)
+		{
+			num++;
+		}
+		p=p->next;
+	}
+	if(num==0)
+		printf("NA\n");*/
+
