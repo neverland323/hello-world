@@ -63,12 +63,15 @@ testee Create(testee L,int N)
 }
 void fun1(testee L,char *query)    //成绩降序排序
 {
-	testee p,h,s,g,temp;  
+	testee p,h,s,g,temp,Q;  
 	char a[Max];
 	int flag=0;
-	h=L;
-	p=h;
+	Q=(testee)malloc(sizeof(testee));
+	Q->card=(char*)malloc(sizeof(char)*Max);
+	Q->next=NULL;
 	L=L->next;
+	h=Q;
+	p=h;
 	while(L)
 	{
 		strncpy(a,L->card,1);
@@ -160,7 +163,6 @@ void fun2(testee L,char *query)
 }
 void fun3(testee L,char *query)
 {
-	int num=0;
 	char a[Max],b[Max];
 	L=L->next;
 	testee S,p,q,s,pre,temp;      //s写，q指向新建链表头结点，p指插入节点位置兼遍历，L遍历传入链表
@@ -206,12 +208,12 @@ void fun3(testee L,char *query)
 	else
 	{
 		p=S->next;
-		q=S->next->next;
 		temp=(testee)malloc(sizeof(testee));
 		temp->card=(char*)malloc(sizeof(char)*Max);
 		temp->next=NULL;
 		while(p)
 		{
+			q=p->next;
 			while(q)
 			{
 				if(q->score>p->score)
@@ -230,18 +232,3 @@ void fun3(testee L,char *query)
 		Print(S);
 	}
 }
-/*	testee p;
-	p=L->next;
-	char a[Max];
-	while(p)
-	{
-		strncpy(a,&query[4],6);
-		if(strcmp(a,query)==0)
-		{
-			num++;
-		}
-		p=p->next;
-	}
-	if(num==0)
-		printf("NA\n");*/
-
