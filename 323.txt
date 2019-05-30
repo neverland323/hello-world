@@ -1,35 +1,49 @@
 #include<stdio.h>
-typedef struct {  
-    char name[6];  
-    int year;  
-    int month;  
-    int day;  
-}person;
-int main(){
-    int num,i,c=0;
-    person youngest={"a",2014,9,6},oldest={"b",1814,9,6},old={"a",2014,9,6},young={"b",1814,9,6},P;
-    scanf("%d",&num);
-    for(i=0;i<num;i++){
-        scanf("%s%d/%d/%d",P.name,&P.year,&P.month,&P.day);
-        if(older(P,youngest)&&older(oldest,P)){
-            if(older(young,P)){
-                young=P;
-            }
-            if(older(P,old)){
-                old=P;
-            }
-            c++;
-        }
+#include<string.h>
+ 
+int main()
+{
+  char szData[1021]={0},szFan[1021]={0};//数字本身和反转数字，要超出数字范围和10次相加的进位
+  gets(szData);
+  int iLen=strlen(szData);
+  int flag=0,sum=0;//进位标志和储存每一位的和的临时变量
+  for(int i=0;i<11;i++)
+  {
+    flag=0;
+    for(int j=0;j<iLen;j++)//存储反转
+    {
+      szFan[j]=szData[iLen-1-j];
     }
-    if(c>0)
-        printf("%d %s %s",c,old.name,young.name);
-    else printf("0");
-    return 0;
-}
-int older(person a,person b){
-    if(((a.year)*1000+(a.month)*100+(a.day))>((b.year)*1000+(b.month)*100+(b.day))){  
-        return 0;
-    }else{  
-        return 1;
-    }  
+    if(strcmp(szData,szFan)==0)//验证是否相等，相等则退出
+    {
+      printf("%s is a palindromic number.",szData);
+      break;
+    }
+    else if(i==10)//不相等但达到10次
+    {
+      printf("Not found in 10 iterations.");
+      break;
+    }
+    else
+    {
+      printf("%s + %s = ",szData,szFan);
+    }
+    for(int j=iLen-1;j>=0;j--)//逐位相加
+    {
+      sum=(szData[j]-'0')+(szFan[j]-'0')+flag;
+      flag=sum/10;
+      szData[j]=sum%10+'0';
+    }
+    if(flag==1)//最高位进位的情况
+    {
+      iLen++;
+      for(int j=iLen-1;j>0;j--)
+      {
+        szData[j]=szData[j-1];
+      }
+      szData[0]=1+'0';
+    }
+    printf("%s\n",szData);
+  }
+  return 0;
 }
