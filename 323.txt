@@ -1,234 +1,28 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-const int Max=14;
-struct node{
-	char *card;
-	int score;
-	struct node *next;
-};
-typedef struct node *testee;
-testee Create(testee L,int N);
-void fun1(testee L,char *query);
-void fun2(testee L,char *query);
-void fun3(testee L,char *query);
-void Print(testee L);
+include<stdio.h>
+#include<math.h>
+int Count1(long b,int B);
+int Count2(long a,int A);
 int main()
 {
-	int N,M,type,i;
-	testee L;
-	char query[7];
-	scanf("%d%d",&N,&M);
-	L=Create(L,N);
-	for(i=1;i<=M;i++)
-	{
-		scanf("%d",&type);
-		scanf("%s",query);
-		printf("Case %d:%d %s\n",i,i,query);
-		switch(type)
-		{
-		case 1:
-			fun1(L,query);
-			break;
-		case 2:
-			fun2(L,query);
-			break;
-		case 3:
-			fun3(L,query);
-			break;
-		}
-	}
+	long a,b;
+	int A,B;
+	int PA,PB;
+	scanf("%ld %d %ld %d",&a,&A,&b,&B);
+	PA=Count1(a,A);
+	PB=Count1(b,B);
+	printf("%d\n",PA+PB);
 	return 0;
 }
-testee Create(testee L,int N)
+int Count1(long a,int A)
 {
-	testee p,g;
-	char a[Max];
-	int b;
-	L=(testee)malloc(sizeof(testee));
-	L->next=NULL;
-	g=L;
-	while(N--)
+	int i,j=0,c=0;
+	for(i=1;i<10;i++)
 	{
-		scanf("%s%d",a,&b);
-		p=(testee)malloc(sizeof(testee));
-		p->card=(char*)malloc(sizeof(char)*14);
-		strcpy(p->card,a);
-		p->score=b;
-		p->next=NULL;
-		L->next=p;
-		L=p;
-	}
-	return g;
-}
-void fun1(testee L,char *query)    //成绩降序排序
-{
-	testee p,h,s,g,temp,Q;  
-	char a[Max];
-	int flag=0;
-	Q=(testee)malloc(sizeof(testee));
-	Q->card=(char*)malloc(sizeof(char)*Max);
-	Q->next=NULL;
-	L=L->next;
-	h=Q;
-	p=h;
-	while(L)
-	{
-		strncpy(a,L->card,1);
-		a[1]='\0';
-		if(strcmp(a,query)==0)
+		if((a%(int)(pow(10,i))-a%(int)(pow(10,i-1)))/(int)(pow(10,i-1))==A)
 		{
-			flag=1;
-			s=(testee)malloc(sizeof(testee));
-			s->card=(char *)malloc(sizeof(char)*14);
-			s->next=NULL;
-			strcpy(s->card,L->card);
-			s->score=L->score;
-			p->next=s;
-			p=s;
+			c+=A*(int)(pow(10,j));
+			j++;
 		}
-		L=L->next;
 	}
-	if(flag==0)
-	{
-		printf("NA\n");
-	}
-	p=h->next;
-	temp=(testee)malloc(sizeof(testee));
-	temp->card=(char *)malloc(sizeof(char)*14);
-	temp->next=NULL;
-	while(p)       //排序
-	{
-		g=p->next;
-		while(g)
-		{
-			if(g->score>p->score)
-			{
-				strcpy(temp->card,p->card);
-				temp->score=p->score;
-				strcpy(p->card,g->card);
-				p->score=g->score;
-				strcpy(g->card,temp->card);
-				g->score=temp->score;
-			}
-			else if(g->score==p->score)
-			{
-				if(strcmp(g->card,p->card)<0)
-				{
-					strcpy(temp->card,p->card);
-					temp->score=p->score;
-					strcpy(p->card,g->card);
-					p->score=g->score;
-					strcpy(g->card,temp->card);
-					g->score=temp->score;
-				}
-			}
-			g=g->next;
-		}
-		p=p->next;
-	}
-	Print(h);
-}
-void Print(testee L)
-{
-	testee p;
-	p=L->next;
-	while(p)
-	{
-		printf("%s %d\n",p->card,p->score);
-		p=p->next;
-	}
-}
-void fun2(testee L,char *query)
-{
-	int total=0,n=0;
-	testee p;
-	char a[Max];
-	p=L->next;
-	while(p)
-	{
-		strncpy(a,&p->card[1],3);
-		a[3]='\0';
-		if(strcmp(a,query)==0)
-		{
-			total+=p->score;
-			n++;
-		}
-		p=p->next;
-	}
-	if(total==0)
-		printf("NA\n");
-	else
-		printf("%d %d\n",n,total);
-}
-void fun3(testee L,char *query)
-{
-	char a[Max],b[Max];
-	L=L->next;
-	testee S,p,q,s,pre,temp;      //s写，q指向新建链表头结点，p指插入节点位置兼遍历，L遍历传入链表
-	S=(testee)malloc(sizeof(testee));
-	S->card=(char *)malloc(sizeof(char)*Max);
-	S->next=NULL;
-	q=S;    //q不变
-	while(L)
-	{
-		strncpy(a,&L->card[4],6);
-		a[6]='\0';
-		pre=S;
-		p=q->next;
-		if(strcmp(a,query)==0)
-		{
-			while(p)         //存在考场号 score++,不存在插入节点
-			{
-				strncpy(b,&L->card[1],3);
-				b[3]='\0';
-				if(strcmp(b,p->card)==0)
-				{
-					p->score++;
-					break;
-				}
-				pre=pre->next;
-				p=p->next;
-			}
-			if(!p)
-			{
-				s=(testee)malloc(sizeof(testee));
-				s->card=(char*)malloc(sizeof(char)*Max);
-				strncpy(s->card,&L->card[1],3);
-				s->card[3]='\0';
-				s->score=1;
-				s->next=NULL;
-				pre->next=s;
-			}
-		}
-		L=L->next;
-	}
-	if(!S->next)
-		printf("NA\n");
-	else
-	{
-		p=S->next;
-		temp=(testee)malloc(sizeof(testee));
-		temp->card=(char*)malloc(sizeof(char)*Max);
-		temp->next=NULL;
-		while(p)
-		{
-			q=p->next;
-			while(q)
-			{
-				if(q->score>p->score)
-				{
-					strcpy(temp->card,q->card);
-					temp->score=q->score;
-					strcpy(q->card,p->card);
-					q->score=p->score;
-					strcpy(p->card,temp->card);
-					p->score=temp->score;
-				}
-				q=q->next;
-			}
-			p=p->next;
-		}
-		Print(S);
-	}
+	return c;
 }
