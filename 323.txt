@@ -1,49 +1,41 @@
 #include<stdio.h>
 #include<string.h>
- 
+const int Max=1000;
+typedef struct a{
+	char pre[6];
+	int data;
+	char next[6];
+}node;
 int main()
 {
-  char szData[1021]={0},szFan[1021]={0};//数字本身和反转数字，要超出数字范围和10次相加的进位
-  gets(szData);
-  int iLen=strlen(szData);
-  int flag=0,sum=0;//进位标志和储存每一位的和的临时变量
-  for(int i=0;i<11;i++)
-  {
-    flag=0;
-    for(int j=0;j<iLen;j++)//存储反转
-    {
-      szFan[j]=szData[iLen-1-j];
-    }
-    if(strcmp(szData,szFan)==0)//验证是否相等，相等则退出
-    {
-      printf("%s is a palindromic number.",szData);
-      break;
-    }
-    else if(i==10)//不相等但达到10次
-    {
-      printf("Not found in 10 iterations.");
-      break;
-    }
-    else
-    {
-      printf("%s + %s = ",szData,szFan);
-    }
-    for(int j=iLen-1;j>=0;j--)//逐位相加
-    {
-      sum=(szData[j]-'0')+(szFan[j]-'0')+flag;
-      flag=sum/10;
-      szData[j]=sum%10+'0';
-    }
-    if(flag==1)//最高位进位的情况
-    {
-      iLen++;
-      for(int j=iLen-1;j>0;j--)
-      {
-        szData[j]=szData[j-1];
-      }
-      szData[0]=1+'0';
-    }
-    printf("%s\n",szData);
-  }
-  return 0;
+	int num,i,N,j;
+	char a[6],b[]={"-1"};
+	node Node[Max],p;
+	scanf("%s %d %d",a,&num,&N);
+	for(i=0;i<num;i++)
+	{
+		scanf("%s %d %s",p.pre,&p.data,p.next);
+		strcpy(Node[p.data].pre,p.pre);
+		Node[p.data].data=p.data;
+		strcpy(Node[p.data].next,p.next);
+
+	}
+	for(i=1;(i+N-1)<=num;i+=N)
+	{
+		for(j=i;j<i+N/2;j++)
+		{
+			strcpy(p.pre,Node[j].pre);
+			p.data=Node[j].data;
+			strcpy(Node[j].pre,Node[i+N-1-(j-i)].pre);
+			Node[j].data=Node[i+N-1-(j-i)].data;
+			strcpy(Node[i+N-1-(j-i)].pre,p.pre);
+			Node[i+N-1-(j-i)].data=p.data;
+		}
+	}
+	for(j=1;j<=num/N*N;j++)
+		strcpy(Node[j].next,Node[j+1].pre);
+	strcpy(Node[num].next,b);
+	for(j=1;j<=num;j++)
+		printf("%s %d %s\n",Node[j].pre,Node[j].data,Node[j].next);
+	return 0;
 }
