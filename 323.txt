@@ -1,41 +1,246 @@
-#include<stdio.h>
-#include<string.h>
-const int Max=1000;
-typedef struct a{
-	char pre[6];
-	int data;
-	char next[6];
-}node;
-int main()
-{
-	int num,i,N,j;
-	char a[6],b[]={"-1"};
-	node Node[Max],p;
-	scanf("%s %d %d",a,&num,&N);
-	for(i=0;i<num;i++)
-	{
-		scanf("%s %d %s",p.pre,&p.data,p.next);
-		strcpy(Node[p.data].pre,p.pre);
-		Node[p.data].data=p.data;
-		strcpy(Node[p.data].next,p.next);
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>   
+#include <Windows.h>   
+#include <conio.h>
+#include <graphics.h>
+
+#define MAXVEX 20      
+#define INFINITY 65535 
+
+typedef int EdgeType;
+
+typedef struct {            
+	char name[20];               
+	int id;                     
+	char introduction[1000];     
+}VextexType;
+typedef struct Graph{           
+	VextexType vertex[MAXVEX];   
+	EdgeType arc[MAXVEX][MAXVEX]; 
+	int numVertexes, numEdges;   
+}MGraph;
+
+void Menu();                   
+void Create(MGraph *G);         
+void ShortestPath_Floyd(MGraph G, int num1, int num2);   
+void SearchInfo(MGraph *G);    
+void Comment();                
+void ReadComment();             
+void Exit();                  
+
+IMAGE img1,img2;
+char *p="WELCOME TO SOUTHWEST PETROLEUM UNIVERSITY!";
+char *p1="press any key to continue";
+
+int main() {
+	MGraph G;          
+
+	Create(&G);        
+	initgraph(1000,700);
+	loadimage(&img1,"beijing1.jpg");
+	putimage(125,100,&img1);
+	outtextxy(300,500,p);
+	outtextxy(800,650,p1);
+	getch();
+	closegraph();
+
+	while (1) {
+		int choice;    
+		Menu();
+		scanf("%d", &choice);
+		system("cls");
+		switch (choice) {   
+        case 1:            
+            initgraph(1100,750);
+			loadimage(&img2,"ditu.jpg");
+			putimage(30,20,&img2);
+			outtextxy(680,400,p);
+			outtextxy(700,700,p1);
+			getch();
+			closegraph();
+			break;
+		case 2:           
+			system("cls");
+			int num1, num2;
+			while(1){
+				printf("请输入您想查找最短路径的两个景点的编号:\n");
+				scanf("%d%d", &num1, &num2);
+				if (num1<1||num1>10||num2<1||num2>10){
+					printf("景点名称输入错误!请输入编号（1到10）!\n");
+					printf("1.南门\n");
+					printf("2.博学广场\n");
+					printf("3.思学楼\n");
+					printf("4.博学楼\n");
+					printf("5.食堂\n");
+					printf("6.二期\n");
+					printf("7.四大明楼\n");
+					printf("8.梦溪湖\n");
+					printf("9.图书馆\n");
+					printf("10.校医院\n");
+					continue;
+				}
+				else{
+					
+					ShortestPath_Floyd(G, num1, num2);
+					break;
+				}
+			}
+			break;
+		case 3:             
+			system("cls");
+			SearchInfo(&G);
+			break;
+        case 4:             
+            Comment();
+            break;
+        case 5:          
+            ReadComment();
+            break;
+		case 6:            
+			Exit();
+			break;
+		default:
+		    printf("输入错误,请重新输入!");
+		}
+		system("pause");
+		system("cls");
+		}
+	system("pause");
+	return 0;
+}
+
+void Menu() {
+	printf("\n\n\n\n\t\t\t-------------------------------------------------------\n\n\n");
+	printf("\t\t\t\t欢迎使用西南石油大学校园导游咨询系统\n\n");
+	printf("\t\t\t\t\t请选择您需要的功能\n\n");
+	printf("\t\t\t\t\t1.学校平面图\n\n");
+	printf("\t\t\t\t\t2.查询两个景点之间的最短路径\n\n");
+	printf("\t\t\t\t\t3.查询景点的相关信息\n\n");
+	printf("\t\t\t\t\t4.留下您对西南石油大学的评论\n\n");
+	printf("\t\t\t\t\t5.查看评论\n\n");
+	printf("\t\t\t\t\t6.退出程序\n");
+	printf("\n\n\t\t\t-------------------------------------------------------\n\n");
+}
+
+void Create(MGraph *G) {
+	int i, j, w;
+	FILE *fp;
+	fp = fopen("view.txt", "r");
+	if (!fp) {
+		printf("error!");
+		return;
+	}
+	if (fp) {
+		fscanf(fp, "%d,%d", &G->numVertexes, &G->numEdges);
+		for (i = 0; i < G->numVertexes; i++) {
+            fscanf(fp, "%d,%s", &G->vertex[i].id, &G->vertex[i].name);
+            fgets(G->vertex[i].introduction, 1000, fp);
+		}
+
+		for (i = 0; i < G->numVertexes; i++) {
+			for (j = 0; j < G->numVertexes; j++) {
+				G->arc[i][j] = INFINITY;
+			}
+		}
+		for (i = 0; i < G->numEdges; i++) {
+			fscanf(fp, "%d,%d,%d", &i, &j, &w);
+			G->arc[i][j] = w;
+			G->arc[j][i] = G->arc[i][j];
+		}
+		fclose(fp);
 
 	}
-	for(i=1;(i+N-1)<=num;i+=N)
-	{
-		for(j=i;j<i+N/2;j++)
-		{
-			strcpy(p.pre,Node[j].pre);
-			p.data=Node[j].data;
-			strcpy(Node[j].pre,Node[i+N-1-(j-i)].pre);
-			Node[j].data=Node[i+N-1-(j-i)].data;
-			strcpy(Node[i+N-1-(j-i)].pre,p.pre);
-			Node[i+N-1-(j-i)].data=p.data;
+	else
+		G->numEdges = 0;
+}
+
+void ShortestPath_Floyd(MGraph G, int num1, int num2) {
+
+	printf("您查询的是%s到%s的最短距离\n\n", G.vertex[num1-1].name, G.vertex[num2-1].name);
+    int minDistance[MAXVEX][MAXVEX];
+    int path[MAXVEX][MAXVEX];
+ 
+	int i, j;
+    for (i = 0; i < G.numVertexes; i++) {
+        for (j = 0; j < G.numVertexes; j++) {
+            minDistance[i][j] = G.arc[i][j];
+            path[i][j] = -1;
+        }
+    }
+
+    for (int k = 0; k < G.numVertexes; k++){
+        for (int i = 0; i < G.numVertexes; i++) {
+            for (int j = 0; j < G.numVertexes; j++) {
+                if (minDistance[i][j] > minDistance[i][k] + minDistance[k][j]) {
+                    minDistance[i][j] = minDistance[i][k] + minDistance[k][j];
+                    path[i][j] = k;
+                }
+            }
+        }
+    }
+	
+	printf("最短的路径距离为:%d米\n\n", minDistance[num1-1][num2-1]);
+}
+
+void SearchInfo(MGraph *G) {
+	int i;
+	int flag = -1;
+	int num;
+	while(1){
+		printf("请输入您想查询的景点的编号:\n");
+		scanf("%d", &num);
+		for (i = 0; i < G->numVertexes; i++) {
+			if (G->vertex[i].id+1==num){
+				flag = i;
+				break;
+			}
+		}
+		if(flag != -1){
+			printf("该景点的编号为:%d\n", G->vertex[i].id + 1);
+			printf("该景点的名称为:%s\n", G->vertex[i].name);
+			printf("该景点的介绍为:%s\n", G->vertex[i].introduction);
+			break;
+		}
+		else{
+			printf("景点编号输入错误，请输入1到10!\n");
+			continue;
 		}
 	}
-	for(j=1;j<=num/N*N;j++)
-		strcpy(Node[j].next,Node[j+1].pre);
-	strcpy(Node[num].next,b);
-	for(j=1;j<=num;j++)
-		printf("%s %d %s\n",Node[j].pre,Node[j].data,Node[j].next);
-	return 0;
+}
+
+void Comment() {
+    int flag = 0;
+    FILE *fp;
+    fp = fopen("comment.txt", "at");
+    char comment[100];
+    printf("请输入您宝贵的意见:\n");
+    flag = scanf("%s", &comment);
+    fprintf(fp, "%s\n", comment);
+    if (flag) {
+        printf("Thanks for your involvement!\n");
+    }
+    else {
+        printf("I am sorry to tell you that you fail to comment!\n");
+    }
+    fclose(fp);
+}
+
+void ReadComment(){
+    FILE *fp;
+    fp = fopen("comment.txt", "rt");
+    char comment[100];
+    while(fscanf(fp, "%s", &comment) != -1){
+        printf("%s\n", comment);
+    }
+    fclose(fp);
+}
+
+void Exit() {
+    for (int i = 3; i >= 1; i--) {
+        printf("程序正在退出，倒计时：%d秒", i);
+        Sleep(1000);
+        system("cls");
+    }
+    exit(0);
 }
